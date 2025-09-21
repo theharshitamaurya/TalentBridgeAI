@@ -1,10 +1,7 @@
-
 import streamlit as st
 from dotenv import load_dotenv
 from src.generator.question_generator import ArtisanAssistant
 from src.common.logger import get_logger
-
-
 
 # --- Setup ---
 load_dotenv()
@@ -23,14 +20,19 @@ if "menu_open" not in st.session_state:
 if "menu_selection" not in st.session_state:
     st.session_state.menu_selection = "🏠 Home"
 
-
-# --- Hamburger menu button in left column ---
-menu_col, content_col = st.columns([0.13, 0.87])  # reserve left for menu
-
-
-with menu_col:
-    st.markdown("""
+# --- CSS for sidebar, hover, and active states ---
+st.markdown("""
     <style>
+    /* Sidebar panel */
+    .sidebar-menu-panel {
+        background-color: #f7f7fb;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 0 8px rgba(0,0,0,0.05);
+        transition: max-height 0.3s ease;
+        max-width: 200px;
+    }
+    /* Sidebar buttons */
     .stButton > button {
         box-shadow: none !important;
         border-radius: 10px !important;
@@ -39,47 +41,76 @@ with menu_col:
         color: #222668 !important;
         font-size: 18px !important;
         padding: 14px 20px !important;
-        margin-bottom: 13px !important;
+        margin-bottom: 8px !important;
         font-weight: 600 !important;
-        transition: background 0.10s;
+        width: 100%;
+        text-align: left;
+        transition: background 0.2s, color 0.2s;
     }
     .stButton > button:hover {
         background: #dde5fb !important;
         color: #2068d0 !important;
     }
+    /* Active menu highlight */
+    .stButton > button[aria-pressed="true"] {
+        background: #2068d0 !important;
+        color: #fff !important;
+    }
+    /* Hamburger button */
+    .hamburger-btn {
+        font-size: 24px !important;
+        padding: 12px 20px !important;
+        margin-bottom: 15px !important;
+        text-align: center;
+    }
+    /* Responsive columns */
+    @media (max-width: 768px) {
+        .main-content {
+            width: 100% !important;
+            padding: 10px !important;
+        }
+    }
     </style>
 """, unsafe_allow_html=True)
 
+# --- Hamburger menu button in left column ---
+menu_col, content_col = st.columns([0.13, 0.87])  # reserve left for menu
 
-    if st.button("☰", key="menu_open_btn"):
+with menu_col:
+
+    # Hamburger toggle button with accessibility attrs
+    hamburger_pressed = st.button(
+        "☰",
+        key="menu_open_btn",
+        help="Toggle menu",
+        args=None,
+        kwargs=None,
+    )
+
+    if hamburger_pressed:
         st.session_state.menu_open = not st.session_state.menu_open
 
-
     if st.session_state.menu_open:
-        st.markdown("""
-            <div class="sidebar-menu-panel">
-        """, unsafe_allow_html=True)
-        if st.button("🏠 Home", key="nav_home", help="Go Home"):
-            st.session_state.menu_selection = "🏠 Home"
-            st.session_state.menu_open = False
-            st.rerun()
-        if st.button("👤 Profile Creator", key="nav_profile", help="Go Profile"):
-            st.session_state.menu_selection = "1️⃣ Artisan Profile Creator"
-            st.session_state.menu_open = False
-            st.rerun()
-        if st.button("🛍️ Craft Listing", key="nav_listing", help="Go Listing"):
-            st.session_state.menu_selection = "2️⃣ Craft Listing Generator"
-            st.session_state.menu_open = False
-            st.rerun()
-        if st.button("📈 Marketplace Feed", key="nav_feed", help="Go Feed"):
-            st.session_state.menu_selection = "3️⃣ Smart Marketplace Feed"
-            st.session_state.menu_open = False
-            st.rerun()
+        st.markdown('<div class="sidebar-menu-panel" role="menu" aria-label="Main menu">', unsafe_allow_html=True)
+        # Define buttons with aria-pressed for active highlight and keyboard nav
+        menu_items = [
+            ("🏠 Home", "🏠 Home", "Go Home"),
+            ("👤 Profile Creator", "1️⃣ Artisan Profile Creator", "Go Profile"),
+            ("🛍️ Craft Listing", "2️⃣ Craft Listing Generator", "Go Listing"),
+            ("📈 Marketplace Feed", "3️⃣ Smart Marketplace Feed", "Go Feed"),
+        ]
+        for label, selection, desc in menu_items:
+            is_active = (st.session_state.menu_selection == selection)
+            if st.button(label, key=f"nav_{selection}", help=desc, type="secondary", disabled=False):
+                st.session_state.menu_selection = selection
+                st.session_state.menu_open = False
+                st.experimental_rerun()
         st.markdown("</div>", unsafe_allow_html=True)
-
 
 # --- Main content always rendered in the wide content_col ---
 with content_col:
+    st.markdown('<div class="main-content">', unsafe_allow_html=True)
+
     if st.session_state.menu_selection == "🏠 Home":
         st.title("Welcome to Artisan Marketplace Assistant")
         st.write("Empowering local artisans with AI tools to market their craft and reach new audiences. 🚀")
@@ -87,17 +118,17 @@ with content_col:
         with col1:
             if st.button("👤 Profile Creator", key="card1"):
                 st.session_state.menu_selection = "1️⃣ Artisan Profile Creator"
-                st.rerun()
+                st.experimental_rerun()
             st.info("Digital artisan story: tradition, culture, uniqueness.")
         with col2:
             if st.button("🛍️ Craft Listing", key="card2"):
                 st.session_state.menu_selection = "2️⃣ Craft Listing Generator"
-                st.rerun()
+                st.experimental_rerun()
             st.info("E-commerce listings: SEO titles, persuasive descriptions.")
         with col3:
             if st.button("📈 Marketplace Feed", key="card3"):
                 st.session_state.menu_selection = "3️⃣ Smart Marketplace Feed"
-                st.rerun()
+                st.experimental_rerun()
             st.info("AI-driven insights: categories, trending tags, trends.")
 
     elif st.session_state.menu_selection.startswith("1️⃣"):
@@ -190,3 +221,5 @@ with content_col:
                         logger.error(f"Smart feed error: {e}")
                 else:
                     st.warning("Please enter a product name for trend analysis.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
