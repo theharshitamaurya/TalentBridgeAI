@@ -3,3 +3,4 @@ requests
 langchain
 importlib-metadata
 python-dotenv
+streamlit-option-menu
