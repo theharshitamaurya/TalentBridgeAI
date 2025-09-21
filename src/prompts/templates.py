@@ -49,7 +49,6 @@ FEED_TEMPLATE = (
     "1. Category (best marketplace category).\n"
     "2. Tags (comma-separated, 5–10 tags)\n"
     "3. Trend Insights (1–2 sentences on current trends, platforms, or regions where it’s popular)\n"
-
 )
 
 # Mini templates for future extension (not currently used)

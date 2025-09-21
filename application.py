@@ -62,17 +62,17 @@ if selection == "Home":
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.header("👤 Profile Story Generator"):
+        if st.header("👤 Bio Generator"):
             st.query_params["page"] = "Story Generator"
-        st.info("Digital artisan story:Create a compelling digital story for your craft that highlights your tradition, culture, and uniqueness. This feature helps artisans craft an engaging narrative that connects emotionally with buyers and builds a meaningful brand identity.")
+        st.info("Helps artisans tell their unique craft story in a way that highlights culture and tradition, creating emotional connection and brand identity.")
     with col2:
         if st.header("🛍️ Craft Listing"):
             st.query_params["page"] = "Craft Listing"
-        st.info("Generate complete product listings with SEO-friendly titles, persuasive descriptions, and competitive pricing. This tool simplifies creating effective e-commerce listings ready for platforms like Shopify, making products more visible and attractive to buyers.")
+        st.info("Generates ready-to-sell product listings (titles, descriptions, pricing) optimized for platforms like Shopify, making products easier to discover and buy.")
     with col3:
         if st.header("📈 Marketplace Feed"):
             st.query_params["page"] = "Smart Marketplace Feed"
-        st.info("Get AI-powered insights into product trends, popular categories, and buyer interests relevant to your craft. These insights help artisans stay updated on market demands, optimize their offerings, and reach the right audience for growth.")
+        st.info("Provides AI-driven market insights on trends and buyer interests so artisans can adapt their craft to demand and grow their reach.")
 
     st.markdown("---")
     st.subheader("Featured Artisans")
@@ -134,6 +134,61 @@ elif selection == "Profile Story Generator":
                     logger.error(f"Artisan profile error: {e}")
             else:
                 st.warning("Please fill all fields to generate the story.")
+
+elif selection == "Craft Listing":
+    st.header("🛍️ Craft Listing Generator")
+    with st.form("listing_form"):
+        uploaded_photo = st.file_uploader("Product photo", type=['jpg', 'jpeg', 'png'])
+        title = st.text_input("Product Title")
+        description = st.text_area("Description (optional)")
+        price = st.text_input("Your Price")
+        cost = st.text_input("Cost per Item")
+        generate_full = st.form_submit_button("Generate Complete Listing")
+
+        if generate_full:
+            if not title or not price or not cost:
+                st.warning("Please fill in Title, Price, and Cost.")
+            else:
+                try:
+                    photo_value = uploaded_photo.name if uploaded_photo else None
+                    result = assistant.generate_full_listing(
+                        title=title,
+                        description=description,
+                        photo=photo_value,
+                        price=price,
+                        cost=cost,
+                    )
+                    tab1, tab2, tab3 = st.tabs(["Overview", "Business Info", "Technical"])
+
+                    with tab1:
+                        st.subheader("SEO Title")
+                        st.write(result.get("seo_title", "-") or "-")
+                        st.subheader("Description")
+                        st.markdown(result.get("description", "-") or "-")
+                        st.subheader("Category")
+                        st.info(result.get("category", "-") or "-")
+
+                    with tab2:
+                        profit = result.get("profit", {})
+                        profit_margin = parse_number(profit.get("profit_margin", ""))
+                        profit_amount = parse_number(profit.get("profit_amount", ""))
+
+                        st.subheader("Profit & Margin")
+                        st.metric("Profit Margin (%)", f"{profit_margin:.2f}" if profit_margin is not None else "-")
+                        st.metric("Profit Amount", f"{profit_amount:.2f}" if profit_amount is not None else "-")
+
+                    with tab3:
+                        st.subheader("Metafields (Shopify)")
+                        st.code(result.get("metafields", "{}") or "{}", language="json")
+                        st.subheader("Product Type")
+                        st.info(result.get("product_type", "-") or "-")
+                        st.subheader("Tags")
+                        tags = result.get("tags", [])
+                        st.write(", ".join(tags) if tags else "-")
+
+                except Exception as e:
+                    st.error(str(e))
+                    logger.error(f"Listing error: {e}")
 
 elif selection == "Smart Marketplace Feed":
     st.header("📈 Smart Marketplace Feed")
