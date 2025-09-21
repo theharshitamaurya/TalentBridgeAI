@@ -22,17 +22,17 @@ if "menu_selection" not in st.session_state:
 
 # --- Layout ---
 menu_col, content_col = st.columns([0.18, 0.82])  # sidebar 18%, content 82%
-
+  # .sidebar-menu-panel {
+        #     background: #f7f8fc;
+        #     padding: 15px 10px;
+        #     border-radius: 12px;
+        #     box-shadow: 0px 2px 10px rgba(0,0,0,0.05);
+        # }
 # --- Sidebar Menu ---
 with menu_col:
     st.markdown("""
         <style>
-        .sidebar-menu-panel {
-            background: #f7f8fc;
-            padding: 15px 10px;
-            border-radius: 12px;
-            box-shadow: 0px 2px 10px rgba(0,0,0,0.05);
-        }
+      
         .menu-btn {
             display: block;
             width: 100%;              /* same width */
