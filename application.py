@@ -19,7 +19,7 @@ assistant = ArtisanAssistant()
 with st.sidebar:
     st.image("image/logo.png", width=80)  # sample icon
     st.markdown("## Artisan Marketplace")
-    menu_options = ["Home", "Profile Creator", "Craft Listing", "Smart Marketplace Feed"]
+    menu_options = ["Home", "Profile Story Generator", "Craft Listing", "Smart Marketplace Feed"]
     menu_icons = ["house", "person", "shop", "graph-up"]
 
     page_param = st.query_params.get("page", ["Home"])[0]
@@ -57,17 +57,17 @@ if selection == "Home":
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("👤 Profile Creator"):
-            st.query_params["page"] = "Profile Creator"
-        st.info("Digital artisan story: tradition, culture, uniqueness.")
+        if st.button("👤 Profile Story Generator"):
+            st.query_params["page"] = "Story Generator"
+        st.info("Digital artisan story: Create a compelling digital story for your craft that highlights your tradition, culture, and uniqueness. This feature helps artisans craft an engaging narrative that connects emotionally with buyers and builds a meaningful brand identity.")
     with col2:
         if st.button("🛍️ Craft Listing"):
             st.query_params["page"] = "Craft Listing"
-        st.info("E-commerce listings: SEO titles, persuasive descriptions.")
+        st.info("Generate complete product listings with SEO-friendly titles, persuasive descriptions, and competitive pricing. This tool simplifies creating effective e-commerce listings ready for platforms like Shopify, making products more visible and attractive to buyers.")
     with col3:
         if st.button("📈 Marketplace Feed"):
             st.query_params["page"] = "Smart Marketplace Feed"
-        st.info("AI-driven insights: categories, trending tags, trends.")
+        st.info("Get AI-powered insights into product trends, popular categories, and buyer interests relevant to your craft. These insights help artisans stay updated on market demands, optimize their offerings, and reach the right audience for growth.")
 
     st.markdown("---")
     st.subheader("Featured Artisans")
@@ -110,8 +110,8 @@ if selection == "Home":
     with colF:
         st.write("")  # empty for layout balance
 
-elif selection == "Profile Creator":
-    st.header("👤 Artisan Profile Creator")
+elif selection == "Profile Story Generator":
+    st.header("👤 Artisan Brand Story Generator")
     with st.form("profile_form"):
         name = st.text_input("Artisan Name")
         location = st.text_input("Location")
@@ -210,3 +210,12 @@ elif selection == "Smart Marketplace Feed":
                     logger.error(f"Smart feed error: {e}")
             else:
                 st.warning("Please enter a product name for trend analysis.")
+st.markdown("---")
+st.subheader("How It Works")
+
+st.markdown("""
+1. Select a feature from the sidebar menu.
+2. Fill in the required details such as artisan info or product info.
+3. Let AI generate content: profiles, listings, or trend reports instantly.
+4. Copy, use, and share your AI-generated content to expand your craft’s reach on social media.
+""")
