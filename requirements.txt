@@ -4,3 +4,5 @@ langchain
 importlib-metadata
 python-dotenv
 streamlit-option-menu
+pytrends
+matplotlib

@@ -3,6 +3,10 @@ from src.llm.groq_client import GroqClient
 from src.prompts.templates import PROFILE_TEMPLATE, LISTING_TEMPLATE, FEED_TEMPLATE
 from src.common.custom_exception import CustomException
 from src.config.setting import settings
+from pytrends.request import TrendReq
+import matplotlib.pyplot as plt
+import io
+import base64
 
 
 class ArtisanAssistant:
@@ -56,3 +60,25 @@ class ArtisanAssistant:
             return category, tags, trend_report
         except Exception as e:
             raise CustomException("Feed generation failed", e)
+        
+def fetch_google_trends_graph(product_name: str):
+    pytrends = TrendReq()
+    pytrends.build_payload([product_name], timeframe='today 3-m')
+    data = pytrends.interest_over_time()
+    if data.empty:
+        return None
+
+    plt.figure(figsize=(8,3))
+    plt.plot(data.index, data[product_name], label=product_name)
+    plt.title(f'Google Trends interest for "{product_name}"')
+    plt.xlabel('Date')
+    plt.ylabel('Interest')
+    plt.legend()
+    plt.tight_layout()
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close()
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    return img_base64

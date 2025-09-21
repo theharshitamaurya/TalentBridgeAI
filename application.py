@@ -3,6 +3,11 @@ from dotenv import load_dotenv
 from streamlit_option_menu import option_menu
 from src.generator.question_generator import ArtisanAssistant
 from src.common.logger import get_logger
+from src.generator.question_generator import ArtisanAssistant, fetch_google_trends_graph
+# import warnings
+
+# warnings.simplefilter(action='ignore', category=FutureWarning)
+
 
 
 # --- Setup ---
@@ -130,62 +135,6 @@ elif selection == "Profile Story Generator":
             else:
                 st.warning("Please fill all fields to generate the story.")
 
-
-elif selection == "Craft Listing":
-    st.header("🛍️ Craft Listing Generator")
-    with st.form("listing_form"):
-        uploaded_photo = st.file_uploader("Product photo", type=['jpg', 'jpeg', 'png'])
-        title = st.text_input("Product Title")
-        description = st.text_area("Description (optional)")
-        price = st.text_input("Your Price")
-        cost = st.text_input("Cost per Item")
-        generate_full = st.form_submit_button("Generate Complete Listing")
-
-        if generate_full:
-            if not title or not price or not cost:
-                st.warning("Please fill in Title, Price, and Cost.")
-            else:
-                try:
-                    photo_value = uploaded_photo.name if uploaded_photo else None
-                    result = assistant.generate_full_listing(
-                        title=title,
-                        description=description,
-                        photo=photo_value,
-                        price=price,
-                        cost=cost,
-                    )
-                    tab1, tab2, tab3 = st.tabs(["Overview", "Business Info", "Technical"])
-
-                    with tab1:
-                        st.subheader("SEO Title")
-                        st.write(result.get("seo_title", "-") or "-")
-                        st.subheader("Description")
-                        st.markdown(result.get("description", "-") or "-")
-                        st.subheader("Category")
-                        st.info(result.get("category", "-") or "-")
-
-                    with tab2:
-                        profit = result.get("profit", {})
-                        profit_margin = parse_number(profit.get("profit_margin", ""))
-                        profit_amount = parse_number(profit.get("profit_amount", ""))
-
-                        st.subheader("Profit & Margin")
-                        st.metric("Profit Margin (%)", f"{profit_margin:.2f}" if profit_margin is not None else "-")
-                        st.metric("Profit Amount", f"{profit_amount:.2f}" if profit_amount is not None else "-")
-
-                    with tab3:
-                        st.subheader("Metafields (Shopify)")
-                        st.code(result.get("metafields", "{}") or "{}", language="json")
-                        st.subheader("Product Type")
-                        st.info(result.get("product_type", "-") or "-")
-                        st.subheader("Tags")
-                        tags = result.get("tags", [])
-                        st.write(", ".join(tags) if tags else "-")
-
-                except Exception as e:
-                    st.error(str(e))
-                    logger.error(f"Listing error: {e}")
-
 elif selection == "Smart Marketplace Feed":
     st.header("📈 Smart Marketplace Feed")
     with st.form("smart_feed_form"):
@@ -205,11 +154,20 @@ elif selection == "Smart Marketplace Feed":
                     st.subheader("Trend Insights")
                     st.markdown(trend_report or "No trend insights available.")
 
+                    # Fetch and show Google Trends graph
+                    img_base64 = fetch_google_trends_graph(prod_name_feed)
+                    if img_base64:
+                        st.image(f"data:image/png;base64,{img_base64}", caption="Google Trends Data (Last 3 Months)")
+                    else:
+                        st.info("No Google Trends data available for this product.")
+
                 except Exception as e:
-                    st.error(f"Error generating smart feed: {e}")
+                    st.error(f"Error generating smart feed or trends graph: {e}")
                     logger.error(f"Smart feed error: {e}")
             else:
                 st.warning("Please enter a product name for trend analysis.")
+
+
 st.markdown("---")
 st.subheader("How It Works")
 

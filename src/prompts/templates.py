@@ -46,9 +46,10 @@ FEED_TEMPLATE = (
     "You are an AI marketplace analyst. For the given product name, suggest where it fits best online.\n\n"
     "Product Name: {product_name}\n\n"
     "Output Format (plain text, 3 lines exactly):\n"
-    "1. Category (best marketplace category)\n"
+    "1. Category (best marketplace category).\n"
     "2. Tags (comma-separated, 5–10 tags)\n"
     "3. Trend Insights (1–2 sentences on current trends, platforms, or regions where it’s popular)\n"
+
 )
 
 # Mini templates for future extension (not currently used)
