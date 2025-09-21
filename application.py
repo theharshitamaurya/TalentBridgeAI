@@ -57,15 +57,15 @@ if selection == "Home":
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("👤 Profile Story Generator"):
+        if st.header("👤 Profile Story Generator"):
             st.query_params["page"] = "Story Generator"
-        st.info("Digital artisan story: Create a compelling digital story for your craft that highlights your tradition, culture, and uniqueness. This feature helps artisans craft an engaging narrative that connects emotionally with buyers and builds a meaningful brand identity.")
+        st.info("Digital artisan story:Create a compelling digital story for your craft that highlights your tradition, culture, and uniqueness. This feature helps artisans craft an engaging narrative that connects emotionally with buyers and builds a meaningful brand identity.")
     with col2:
-        if st.button("🛍️ Craft Listing"):
+        if st.header("🛍️ Craft Listing"):
             st.query_params["page"] = "Craft Listing"
         st.info("Generate complete product listings with SEO-friendly titles, persuasive descriptions, and competitive pricing. This tool simplifies creating effective e-commerce listings ready for platforms like Shopify, making products more visible and attractive to buyers.")
     with col3:
-        if st.button("📈 Marketplace Feed"):
+        if st.header("📈 Marketplace Feed"):
             st.query_params["page"] = "Smart Marketplace Feed"
         st.info("Get AI-powered insights into product trends, popular categories, and buyer interests relevant to your craft. These insights help artisans stay updated on market demands, optimize their offerings, and reach the right audience for growth.")
 
