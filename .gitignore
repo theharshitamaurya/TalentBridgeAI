@@ -1,0 +1,7 @@
+ARTISANASSISTANT.egg-info/
+data/
+logs/
+venv/
+.env
+imp.md
+__pycache__/
