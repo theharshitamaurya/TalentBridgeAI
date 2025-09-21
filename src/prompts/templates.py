@@ -8,7 +8,7 @@ PROFILE_TEMPLATE = (
     "- Craft type: {craft_type}\n\n"
     "Guidelines:\n"
     "- Write in a friendly, inspiring tone suitable for social media.\n"
-    "- Keep it concise (150–200 words).\n"
+    "- Keep it concise (less then 150 words).\n"
     "- Highlight tradition, culture, and uniqueness of the craft.\n"
     "- Make it engaging so buyers feel emotionally connected.\n"
     "- it's for social media buissness account creation for ex- instagram, facebook.\n"
