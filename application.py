@@ -1,24 +1,21 @@
+
 import streamlit as st
+from dotenv import load_dotenv
 from src.generator.question_generator import ArtisanAssistant
 from src.common.logger import get_logger
 
+
+
 # --- Setup ---
+load_dotenv()
 logger = get_logger("main")
-
-# Fetch your GROQ API key from Streamlit secrets and strip quotes if present
-api_key = st.secrets.get("GROQ_API_KEY", None)
-if api_key is None:
-    st.error("GROQ_API_KEY missing in Streamlit secrets!")
-    st.stop()
-else:
-    api_key = api_key.strip('"')  # Remove surrounding quotes if any
-
-assistant = ArtisanAssistant(api_key=api_key)
 
 st.set_page_config(
     page_title="🪡 Artisan Marketplace Assistant",
     layout="wide"
 )
+
+assistant = ArtisanAssistant()
 
 # --- Menu state ---
 if "menu_open" not in st.session_state:
@@ -26,8 +23,10 @@ if "menu_open" not in st.session_state:
 if "menu_selection" not in st.session_state:
     st.session_state.menu_selection = "🏠 Home"
 
+
 # --- Hamburger menu button in left column ---
 menu_col, content_col = st.columns([0.13, 0.87])  # reserve left for menu
+
 
 with menu_col:
     st.markdown("""
@@ -51,8 +50,10 @@ with menu_col:
     </style>
 """, unsafe_allow_html=True)
 
+
     if st.button("☰", key="menu_open_btn"):
         st.session_state.menu_open = not st.session_state.menu_open
+
 
     if st.session_state.menu_open:
         st.markdown("""
@@ -61,42 +62,42 @@ with menu_col:
         if st.button("🏠 Home", key="nav_home", help="Go Home"):
             st.session_state.menu_selection = "🏠 Home"
             st.session_state.menu_open = False
-            st.experimental_rerun()
+            st.rerun()
         if st.button("👤 Profile Creator", key="nav_profile", help="Go Profile"):
             st.session_state.menu_selection = "1️⃣ Artisan Profile Creator"
             st.session_state.menu_open = False
-            st.experimental_rerun()
+            st.rerun()
         if st.button("🛍️ Craft Listing", key="nav_listing", help="Go Listing"):
             st.session_state.menu_selection = "2️⃣ Craft Listing Generator"
             st.session_state.menu_open = False
-            st.experimental_rerun()
+            st.rerun()
         if st.button("📈 Marketplace Feed", key="nav_feed", help="Go Feed"):
             st.session_state.menu_selection = "3️⃣ Smart Marketplace Feed"
             st.session_state.menu_open = False
-            st.experimental_rerun()
+            st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-# --- Main content ---
+
+# --- Main content always rendered in the wide content_col ---
 with content_col:
     if st.session_state.menu_selection == "🏠 Home":
         st.title("Welcome to Artisan Marketplace Assistant")
         st.write("Empowering local artisans with AI tools to market their craft and reach new audiences. 🚀")
-
         col1, col2, col3 = st.columns(3)
         with col1:
             if st.button("👤 Profile Creator", key="card1"):
                 st.session_state.menu_selection = "1️⃣ Artisan Profile Creator"
-                st.experimental_rerun()
+                st.rerun()
             st.info("Digital artisan story: tradition, culture, uniqueness.")
         with col2:
             if st.button("🛍️ Craft Listing", key="card2"):
                 st.session_state.menu_selection = "2️⃣ Craft Listing Generator"
-                st.experimental_rerun()
+                st.rerun()
             st.info("E-commerce listings: SEO titles, persuasive descriptions.")
         with col3:
             if st.button("📈 Marketplace Feed", key="card3"):
                 st.session_state.menu_selection = "3️⃣ Smart Marketplace Feed"
-                st.experimental_rerun()
+                st.rerun()
             st.info("AI-driven insights: categories, trending tags, trends.")
 
     elif st.session_state.menu_selection.startswith("1️⃣"):
