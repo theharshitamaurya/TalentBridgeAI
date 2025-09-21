@@ -1,153 +1,150 @@
 import streamlit as st
 from dotenv import load_dotenv
+from streamlit_option_menu import option_menu
 from src.generator.question_generator import ArtisanAssistant
 from src.common.logger import get_logger
+
 
 # --- Setup ---
 load_dotenv()
 logger = get_logger("main")
-
 st.set_page_config(
     page_title="🪡 Artisan Marketplace Assistant",
     layout="wide"
 )
-
 assistant = ArtisanAssistant()
 
-# --- Menu state ---
-if "menu_open" not in st.session_state:
-    st.session_state.menu_open = False
-if "menu_selection" not in st.session_state:
-    st.session_state.menu_selection = "🏠 Home"
 
-# --- Layout ---
-menu_col, content_col = st.columns([0.18, 0.82])  # sidebar 18%, content 82%
-  # .sidebar-menu-panel {
-        #     background: #f7f8fc;
-        #     padding: 15px 10px;
-        #     border-radius: 12px;
-        #     box-shadow: 0px 2px 10px rgba(0,0,0,0.05);
-        # }
-# --- Sidebar Menu ---
-with menu_col:
-    st.markdown("""
-        <style>
-      
-        .menu-btn {
-            display: block;
-            width: 100%;              /* same width */
-            height: 50px;             /* same height */
-            line-height: 25px;        /* centers text */
-            text-align: left;
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 12px 18px;
-            margin-bottom: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            color: #333333;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .menu-btn:hover {
-            background: #eaf2ff;
-            color: #1a73e8;
-            border-color: #1a73e8;
-        }
-        .menu-btn.active {
-            background: #1a73e8 !important;
-            color: #ffffff !important;
-            border-color: #1a73e8 !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+# --- Sidebar Navigation ---
+with st.sidebar:
+    st.image("image/logo.png", width=80)  # sample icon
+    st.markdown("## Artisan Marketplace")
+    menu_options = ["Home", "Profile Creator", "Craft Listing", "Smart Marketplace Feed"]
+    menu_icons = ["house", "person", "shop", "graph-up"]
 
-    if st.button("☰", key="menu_open_btn"):
-        st.session_state.menu_open = not st.session_state.menu_open
+    page_param = st.query_params.get("page", ["Home"])[0]
+    if page_param not in menu_options:
+        page_param = "Home"
 
-    if st.session_state.menu_open:
-        st.markdown("<div class='sidebar-menu-panel'>", unsafe_allow_html=True)
+    selection = option_menu(
+        "MENU",
+        menu_options,
+        icons=menu_icons,
+        menu_icon="☰",
+        default_index=menu_options.index(page_param),
+    )
 
-        def nav_button(label, key, selection):
-            is_active = st.session_state.menu_selection == selection
-            btn_class = "menu-btn active" if is_active else "menu-btn"
-            clicked = st.button(label, key=key)
-            st.markdown(f"""
-                <script>
-                    var btn = window.parent.document.querySelector('button[kind="{key}"]');
-                    if (btn) {{
-                        btn.className = '{btn_class}';
-                    }}
-                </script>
-            """, unsafe_allow_html=True)
-            if clicked:
-                st.session_state.menu_selection = selection
-                st.session_state.menu_open = True
-                st.rerun()
+    # Update query param if menu selection changed
+    if st.query_params.get("page", [None])[0] != selection:
+        st.query_params["page"] = selection
 
-        nav_button("🏠 Home", "nav_home", "🏠 Home")
-        nav_button("👤 Profile Creator", "nav_profile", "1️⃣ Artisan Profile Creator")
-        nav_button("🛍️ Craft Listing", "nav_listing", "2️⃣ Craft Listing Generator")
-        nav_button("📈 Marketplace Feed", "nav_feed", "3️⃣ Smart Marketplace Feed")
 
-        st.markdown("</div>", unsafe_allow_html=True)
+# --- Helper: Safe number parsing ---
+def parse_number(value):
+    if not value:
+        return None
+    value = str(value).replace("%", "").strip()
+    try:
+        return float(value)
+    except ValueError:
+        return None
+
 
 # --- Main Content ---
-with content_col:
-    if st.session_state.menu_selection == "🏠 Home":
-        st.title("Welcome to Artisan Marketplace Assistant")
-        st.write("Empowering local artisans with AI tools to market their craft and reach new audiences. 🚀")
+if selection == "Home":
+    st.title("Welcome to Artisan Marketplace Assistant")
+    st.write("Empowering local artisans with AI tools to market their craft and reach new audiences. 🚀")
 
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            if st.button("👤 Profile Creator", key="card1"):
-                st.session_state.menu_selection = "1️⃣ Artisan Profile Creator"
-                st.rerun()
-            st.info("Digital artisan story: tradition, culture, uniqueness.")
-        with col2:
-            if st.button("🛍️ Craft Listing", key="card2"):
-                st.session_state.menu_selection = "2️⃣ Craft Listing Generator"
-                st.rerun()
-            st.info("E-commerce listings: SEO titles, persuasive descriptions.")
-        with col3:
-            if st.button("📈 Marketplace Feed", key="card3"):
-                st.session_state.menu_selection = "3️⃣ Smart Marketplace Feed"
-                st.rerun()
-            st.info("AI-driven insights: categories, trending tags, trends.")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("👤 Profile Creator"):
+            st.query_params["page"] = "Profile Creator"
+        st.info("Digital artisan story: tradition, culture, uniqueness.")
+    with col2:
+        if st.button("🛍️ Craft Listing"):
+            st.query_params["page"] = "Craft Listing"
+        st.info("E-commerce listings: SEO titles, persuasive descriptions.")
+    with col3:
+        if st.button("📈 Marketplace Feed"):
+            st.query_params["page"] = "Smart Marketplace Feed"
+        st.info("AI-driven insights: categories, trending tags, trends.")
 
-    elif st.session_state.menu_selection.startswith("1️⃣"):
-        st.header("👤 Artisan Profile Creator")
-        with st.form("profile_form"):
-            name = st.text_input("Artisan Name")
-            location = st.text_input("Location")
-            craft_type = st.text_input("Craft Type")
-            submitted1 = st.form_submit_button("Generate Digital Story")
-            if submitted1:
-                if name and location and craft_type:
-                    try:
-                        story = assistant.generate_profile_story(name, location, craft_type)
-                        st.success("Here’s your artisan story:")
-                        st.markdown(story)
-                    except Exception as e:
-                        st.error(str(e))
-                        logger.error(f"Artisan profile error: {e}")
-                else:
-                    st.warning("Please fill all fields to generate the story.")
+    st.markdown("---")
+    st.subheader("Featured Artisans")
 
-    elif st.session_state.menu_selection.startswith("2️⃣"):
-        st.header("🛍️ Craft Listing Generator")
-        with st.form("listing_form"):
-            uploaded_photo = st.file_uploader("Product photo", type=['jpg', 'jpeg', 'png'])
-            title = st.text_input("Product Title (optional)")
-            description = st.text_area("Description (optional)")
-            price = st.text_input("Your Price")
-            cost = st.text_input("Cost per Item")
-            generate_full = st.form_submit_button("Generate Complete Listing")
-            if generate_full:
+
+    # First row of 3 artisans
+    colA, colB, colC = st.columns(3)
+    with colA:
+        st.image("image/molten glass.jpg", width="stretch")
+        st.markdown("### Sandeep Rao")
+        st.markdown("<span style='background:#d0e9ff;padding:4px;border-radius:4px;'>Glassblower (Glass Artist)</span>", unsafe_allow_html=True)
+        st.write("Sandeep Rao is a molten glass artisan known for hot glass blowing and creating colorful decorative glassware.")
+    with colB:
+        st.image("image/indian kurta.jpg", width="stretch")
+        st.markdown("### Rahul Sinha")
+        st.markdown("<span style='background:#d6f5d6;padding:4px;border-radius:4px;'>embroidered ethnic wear</span>", unsafe_allow_html=True)
+        st.write("Rahul Sinha is a textile designer specializing in heritage embroidery and handcrafted kurta collections.")
+    with colC:
+        st.image("image/woman painting.jpg", width="stretch")
+        st.markdown("### Ankit Verma")
+        st.markdown("<span style='background:#cce0ff;padding:4px;border-radius:4px;'>Watercolor Artist (Painter)</span>", unsafe_allow_html=True)
+        st.write("Ankit Verma is a nature-inspired painter best known for delicate bird-and-flower watercolor compositions.")
+
+    # st.markdown("---")
+    st.text(" ")
+
+
+    # Second row of 2 artisans (left empty space for alignment)
+    colD, colE, colF = st.columns(3)
+    with colD:
+        st.image("image/pottary.jpg", width="stretch")
+        st.markdown("### Asha Gupta")
+        st.markdown("<span style='background:#fff0c2;padding:4px;border-radius:4px;'>Potter (Ceramic Artist)</span>", unsafe_allow_html=True)
+        st.write("Asha Gupta is a potter crafting stoneware and terracotta vessels using traditional coil and slab techniques.")
+    with colE:
+        st.image("image/painting.jpg", width="stretch")
+        st.markdown("### Neha Das")
+        st.markdown("<span style='background:#cce0ff;padding:4px;border-radius:4px;'>Visual Artist (Painter)</span>", unsafe_allow_html=True)
+        st.write("Neha Das is a visual artist specializing in expressive portraits and landscapes using mixed media techniques.")
+    with colF:
+        st.write("")  # empty for layout balance
+
+elif selection == "Profile Creator":
+    st.header("👤 Artisan Profile Creator")
+    with st.form("profile_form"):
+        name = st.text_input("Artisan Name")
+        location = st.text_input("Location")
+        craft_type = st.text_input("Craft Type")
+        submitted = st.form_submit_button("Generate Digital Story")
+
+        if submitted:
+            if name and location and craft_type:
+                try:
+                    story = assistant.generate_profile_story(name, location, craft_type)
+                    st.success("Here’s your artisan story:")
+                    st.markdown(story)
+                except Exception as e:
+                    st.error(str(e))
+                    logger.error(f"Artisan profile error: {e}")
+            else:
+                st.warning("Please fill all fields to generate the story.")
+
+
+elif selection == "Craft Listing":
+    st.header("🛍️ Craft Listing Generator")
+    with st.form("listing_form"):
+        uploaded_photo = st.file_uploader("Product photo", type=['jpg', 'jpeg', 'png'])
+        title = st.text_input("Product Title")
+        description = st.text_area("Description (optional)")
+        price = st.text_input("Your Price")
+        cost = st.text_input("Cost per Item")
+        generate_full = st.form_submit_button("Generate Complete Listing")
+
+        if generate_full:
+            if not title or not price or not cost:
+                st.warning("Please fill in Title, Price, and Cost.")
+            else:
                 try:
                     photo_value = uploaded_photo.name if uploaded_photo else None
                     result = assistant.generate_full_listing(
@@ -158,6 +155,7 @@ with content_col:
                         cost=cost,
                     )
                     tab1, tab2, tab3 = st.tabs(["Overview", "Business Info", "Technical"])
+
                     with tab1:
                         st.subheader("SEO Title")
                         st.write(result.get("seo_title", "-") or "-")
@@ -165,22 +163,16 @@ with content_col:
                         st.markdown(result.get("description", "-") or "-")
                         st.subheader("Category")
                         st.info(result.get("category", "-") or "-")
+
                     with tab2:
                         profit = result.get("profit", {})
-                        profit_margin_raw = profit.get("profit_margin", "")
-                        profit_amount_raw = profit.get("profit_amount", "")
+                        profit_margin = parse_number(profit.get("profit_margin", ""))
+                        profit_amount = parse_number(profit.get("profit_amount", ""))
 
-                        def safe_float(value):
-                            try:
-                                return float(value)
-                            except (TypeError, ValueError):
-                                return None
-
-                        profit_margin = safe_float(profit_margin_raw)
-                        profit_amount = safe_float(profit_amount_raw)
                         st.subheader("Profit & Margin")
                         st.metric("Profit Margin (%)", f"{profit_margin:.2f}" if profit_margin is not None else "-")
                         st.metric("Profit Amount", f"{profit_amount:.2f}" if profit_amount is not None else "-")
+
                     with tab3:
                         st.subheader("Metafields (Shopify)")
                         st.code(result.get("metafields", "{}") or "{}", language="json")
@@ -189,25 +181,32 @@ with content_col:
                         st.subheader("Tags")
                         tags = result.get("tags", [])
                         st.write(", ".join(tags) if tags else "-")
+
                 except Exception as e:
                     st.error(str(e))
                     logger.error(f"Listing error: {e}")
 
-    elif st.session_state.menu_selection.startswith("3️⃣"):
-        st.header("📈 Smart Marketplace Feed")
-        with st.form("smart_feed_form"):
-            prod_name_feed = st.text_input("Product Name for Trend Analysis")
-            submitted3 = st.form_submit_button("Check Product Trends")
-            if submitted3:
-                if prod_name_feed:
-                    try:
-                        category, tags, trend_report = assistant.generate_smart_feed(prod_name_feed)
-                        st.success(f"Category: {category}")
-                        st.write(f"Tags: {', '.join(tags)}")
-                        st.subheader("Trend Insights")
-                        st.markdown(trend_report)
-                    except Exception as e:
-                        st.error(str(e))
-                        logger.error(f"Smart feed error: {e}")
-                else:
-                    st.warning("Please enter a product name for trend analysis.")
+elif selection == "Smart Marketplace Feed":
+    st.header("📈 Smart Marketplace Feed")
+    with st.form("smart_feed_form"):
+        prod_name_feed = st.text_input("Product Name for Trend Analysis")
+        submitted = st.form_submit_button("Check Product Trends")
+
+        if submitted:
+            if prod_name_feed:
+                try:
+                    category, tags, trend_report = assistant.generate_smart_feed(prod_name_feed)
+
+                    category_clean = category.replace("Category:", "").strip()
+                    tags_clean = [t.replace("Tags:", "").strip() for t in tags if t.strip()]
+
+                    st.success(f"Category: {category_clean}")
+                    st.write(f"Tags: {', '.join(tags_clean) if tags_clean else '-'}")
+                    st.subheader("Trend Insights")
+                    st.markdown(trend_report or "No trend insights available.")
+
+                except Exception as e:
+                    st.error(f"Error generating smart feed: {e}")
+                    logger.error(f"Smart feed error: {e}")
+            else:
+                st.warning("Please enter a product name for trend analysis.")
