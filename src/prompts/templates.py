@@ -11,6 +11,7 @@ PROFILE_TEMPLATE = (
     "- Keep it concise (150–200 words).\n"
     "- Highlight tradition, culture, and uniqueness of the craft.\n"
     "- Make it engaging so buyers feel emotionally connected.\n"
+    "- it's for social media buissness account creation for ex- instagram, facebook.\n"
 )
 
 LISTING_TEMPLATE = (
