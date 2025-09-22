@@ -68,7 +68,7 @@ By automating storytelling, content generation, and market analytics, TalentBrid
 
 ## Usage
 
-* Open the app in your browser ([https://talentbridgeai.streamlit.app/?](https://talentbridgeai.streamlit.app/?page=Smart+Marketplace+Feed)).
+* Open the app in your browser ([https://talentbridgeai.streamlit.app/](https://talentbridgeai.streamlit.app/?page=Smart+Marketplace+Feed)).
 * Create artisan profiles by entering basic info.
 * Upload craft details or images to generate SEO-friendly listings.
 * Explore real-time marketplace insights and trending crafts.
