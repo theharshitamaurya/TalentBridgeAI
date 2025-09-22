@@ -1,8 +1,3 @@
-Got it ✅ — you want me to rewrite your **TalentBridgeAI** doc in the exact same clean, copy-paste Markdown style as your **IntelliHire** example.
-Here’s the fully reformatted version:
-
----
-
 # TalentBridgeAI – AI Marketplace Assistant for Artisans
 
 TalentBridgeAI empowers local artisans to share authentic stories, create SEO-friendly product listings, and access real-time market insights—without needing digital marketing expertise.
