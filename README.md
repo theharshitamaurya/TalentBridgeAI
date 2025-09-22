@@ -73,7 +73,7 @@ By automating storytelling, content generation, and market analytics, TalentBrid
 
 ## Usage
 
-* Open the app in your browser (default: [talentbridgeai.streamlit.app]([talentbridgeai.streamlit.app](https://talentbridgeai.streamlit.app/?page=Smart+Marketplace+Feed))).
+* Open the app in your browser ((https://talentbridgeai.streamlit.app/?page=Smart+Marketplace+Feed)](https://talentbridgeai.streamlit.app/?page=Smart+Marketplace+Feed)).
 * Create artisan profiles by entering basic info.
 * Upload craft details or images to generate SEO-friendly listings.
 * Explore real-time marketplace insights and trending crafts.
@@ -129,14 +129,7 @@ Contributions are welcome!
 ## Contacts
 
 * Open an issue on [GitHub Repository](https://github.com/theharshitamaurya/talentbridgeai)
-* Maintainer: \[harshita20maurya@gmail.com / Team Email]
-
----
-
-## License
-
-This project is open-source and free for artisans, small businesses, and individuals.
-See [LICENSE](LICENSE) for details.
+* Maintainer: [harshita20maurya@gmail.com]
 
 ---
 
